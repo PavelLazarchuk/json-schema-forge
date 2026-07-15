@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+::selection {
+    background-color: --alpha(var(--color-indigo-300) / 45%);
+}
+.dark ::selection {
+    background-color: --alpha(var(--color-indigo-500) / 35%);
+}
+
+button:not(:disabled),
+[role='button']:not(:disabled),
+a,
+select,
+input[type='checkbox'],
+input[type='file'],
+label:has(> input[type='checkbox']) {
+    cursor: pointer;
+}

@@ -1,0 +1,46 @@
+{
+    "name": "json-schema-forge",
+    "version": "1.0.0",
+    "description": "json-schema-forge-app",
+    "private": true,
+    "sideEffects": false,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "typecheck": "tsc --noEmit"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/PavelLazarchuk/json-schema-forge.git"
+    },
+    "author": "Pavel Lazarchuk",
+    "license": "MIT",
+    "browserslist": [
+        ">0.3%",
+        "not ie 11",
+        "not dead",
+        "not op_mini all"
+    ],
+    "dependencies": {
+        "@monaco-editor/react": "^4.7.0",
+        "@vercel/speed-insights": "^2.0.0",
+        "next": "16.2.10",
+        "react": "19.2.7",
+        "react-dom": "19.2.7"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.3.2",
+        "@types/node": "^26.1.1",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "eslint": "^9.39.5",
+        "eslint-config-next": "16.2.10",
+        "prettier": "^3.9.5",
+        "tailwindcss": "^4.3.2",
+        "typescript": "^6.0.3"
+    }
+}
