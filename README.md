@@ -4,6 +4,8 @@ Convert JSON into ready-to-use **TypeScript interfaces/types**, **Zod schemas**,
 **JSON Schema (draft 2020-12)** — entirely in your browser. Paste JSON or upload a `.json` file, tweak the generation
 settings, and copy or download the result.
 
+**Live app:** https://json-schema-forge-eight.vercel.app
+
 ## Features
 
 - **Live generation** — output updates as you type (debounced), side by side in Monaco editors

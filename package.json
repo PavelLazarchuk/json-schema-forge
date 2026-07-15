@@ -13,6 +13,7 @@
         "format:check": "prettier --check .",
         "typecheck": "tsc --noEmit"
     },
+    "homepage": "https://json-schema-forge-eight.vercel.app",
     "repository": {
         "type": "git",
         "url": "https://github.com/PavelLazarchuk/json-schema-forge.git"
