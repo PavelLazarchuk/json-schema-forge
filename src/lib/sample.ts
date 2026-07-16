@@ -1,9 +1,10 @@
-/** Demo payload showcasing nesting, optional fields, null, unions and empty arrays. */
+/** Demo payload showcasing nesting, optional fields, null, unions, empty arrays and ISO dates. */
 export const SAMPLE_JSON = `{
   "id": 101,
   "name": "John",
   "email": null,
   "isActive": true,
+  "createdAt": "2024-05-01T10:30:00Z",
   "address": {
     "city": "New York",
     "zip": "10001",

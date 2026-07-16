@@ -13,6 +13,9 @@ export interface GenerationSettings {
     zodInferType: boolean; // add z.infer export
     readonly: boolean; // readonly fields + readonly arrays (TS and Zod)
     useConst: boolean; // literal inference toggle
+    dateFormat: 'off' | 'iso-string' | 'date'; // ISO strings: plain, z.string().datetime(), or Date
+    inferIntegers: boolean; // whole numbers → z.number().int() / JSON Schema "integer"
+    inferEnums: boolean; // repeated string values across arrays → named enum
 }
 
 export const DEFAULT_SETTINGS: GenerationSettings = {
@@ -28,6 +31,9 @@ export const DEFAULT_SETTINGS: GenerationSettings = {
     zodInferType: true,
     readonly: false,
     useConst: false,
+    dateFormat: 'iso-string',
+    inferIntegers: true,
+    inferEnums: false,
 };
 
 export function nameOptions(settings: GenerationSettings): NameOptions {

@@ -101,6 +101,21 @@ export function SettingsBar({ settings, onChange }: Props) {
                 </select>
             </label>
 
+            <label className={fieldLabel}>
+                Date strings
+                <select
+                    value={settings.dateFormat}
+                    onChange={e =>
+                        set('dateFormat', e.target.value as GenerationSettings['dateFormat'])
+                    }
+                    className={selectInput}
+                >
+                    <option value="off">plain string</option>
+                    <option value="iso-string">z.string().datetime()</option>
+                    <option value="date">Date (z.coerce.date())</option>
+                </select>
+            </label>
+
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pb-0.5">
                 {checkbox('emitTs', 'TypeScript')}
                 {checkbox('emitZod', 'Zod')}
@@ -108,6 +123,8 @@ export function SettingsBar({ settings, onChange }: Props) {
                 {checkbox('zodInferType', 'z.infer types')}
                 {checkbox('readonly', 'readonly')}
                 {checkbox('useConst', 'literal types')}
+                {checkbox('inferIntegers', 'integer types')}
+                {checkbox('inferEnums', 'enum detection')}
             </div>
         </div>
     );

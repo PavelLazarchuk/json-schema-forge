@@ -1,8 +1,19 @@
-import { collectObjects, IRNode, rootTypeName, safePropertyKey } from './ir';
+import { collectEnums, collectObjects, IRNode, rootTypeName, safePropertyKey } from './ir';
 import { GenerationSettings, nameOptions } from './settings';
 
 export function generateZod(root: IRNode, settings: GenerationSettings): string {
     const blocks: string[] = [`import { z } from "zod";`];
+
+    for (const en of collectEnums(root)) {
+        const values = en.values.map(value => JSON.stringify(value)).join(', ');
+        const lines = [`export const ${en.name}Schema = z.enum([${values}]);`];
+
+        if (settings.zodInferType) {
+            lines.push(`export type ${en.name} = z.infer<typeof ${en.name}Schema>;`);
+        }
+
+        blocks.push(lines.join('\n'));
+    }
 
     for (const obj of collectObjects(root).reverse()) {
         const fields = obj.fields.map(field => {
@@ -19,7 +30,7 @@ export function generateZod(root: IRNode, settings: GenerationSettings): string 
         blocks.push(lines.join('\n'));
     }
 
-    if (root.kind !== 'object') {
+    if (root.kind !== 'object' && root.kind !== 'enum') {
         const rootName = rootTypeName(settings.rootName, nameOptions(settings));
         const lines = [`export const ${rootName}Schema = ${zodExpr(root, settings)};`];
 
@@ -42,6 +53,14 @@ function zodPropertyKey(key: string): string {
 function zodExpr(node: IRNode, settings: GenerationSettings): string {
     switch (node.kind) {
         case 'primitive':
+            if (node.type === 'string' && node.format && settings.dateFormat !== 'off') {
+                if (settings.dateFormat === 'date') return 'z.coerce.date()';
+                return node.format === 'date-time' ? 'z.string().datetime()' : 'z.string().date()';
+            }
+            if (node.type === 'number' && node.int && settings.inferIntegers) {
+                return 'z.number().int()';
+            }
+
             return `z.${node.type}()`;
         case 'null':
             return 'z.null()';
@@ -50,6 +69,7 @@ function zodExpr(node: IRNode, settings: GenerationSettings): string {
         case 'literal':
             return `z.literal(${JSON.stringify(node.value)})`;
         case 'object':
+        case 'enum':
             return `${node.name}Schema`;
         case 'array': {
             const array = `z.array(${zodExpr(node.element, settings)})`;

@@ -63,11 +63,14 @@ export default function Home() {
         if (!parsed.ok) return { ir: null, error: parsed.error, empty: false };
 
         return {
-            ir: inferIR(parsed.value, { literals: settings.useConst }),
+            ir: inferIR(parsed.value, {
+                literals: settings.useConst,
+                enums: settings.inferEnums,
+            }),
             error: null,
             empty: false,
         };
-    }, [debouncedText, settings.useConst]);
+    }, [debouncedText, settings.useConst, settings.inferEnums]);
 
     const generated = useMemo<Generated>(() => {
         if (!analyzed.ir) return { ts: '', zod: '', jsonSchema: '', error: null };
