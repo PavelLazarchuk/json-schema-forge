@@ -257,7 +257,7 @@ function singularize(name: string): string {
     if (/ies$/.test(name) && name.length > 3) return name.slice(0, -3) + 'y';
     if (/(sses|xes|ches|shes)$/.test(name)) return name.slice(0, -2);
     if (/s$/.test(name) && !/ss$/.test(name) && name.length > 1) return name.slice(0, -1);
-    
+
     return name;
 }
 

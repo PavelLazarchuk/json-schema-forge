@@ -91,7 +91,7 @@ function withEnums(node: IRNode): IRNode {
             ) {
                 return { kind: 'enum', name: '', values: [...node.values.keys()] };
             }
-            
+
             return node;
         case 'array':
             node.element = withEnums(node.element);

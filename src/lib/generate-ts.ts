@@ -52,7 +52,7 @@ function renderType(node: IRNode, settings: GenerationSettings): string {
             if (node.type === 'string' && node.format && settings.dateFormat !== 'off') {
                 return settings.dateFormat === 'date' ? 'Date' : `string /* ${node.format} */`;
             }
-            
+
             return node.type;
         case 'null':
             return 'null';
