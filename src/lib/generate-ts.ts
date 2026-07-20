@@ -3,6 +3,7 @@ import {
     collectObjects,
     IRNode,
     IRObject,
+    literalSource,
     rootTypeName,
     safePropertyKey,
 } from './ir';
@@ -59,7 +60,7 @@ function renderType(node: IRNode, settings: GenerationSettings): string {
         case 'unknown':
             return settings.arrayEmpty === 'any' ? 'any' : 'unknown';
         case 'literal':
-            return JSON.stringify(node.value);
+            return literalSource(node.value);
         case 'object':
         case 'enum':
             return node.name;

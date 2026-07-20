@@ -109,11 +109,12 @@ export default function Home() {
         return () => {
             cancelled = true;
         };
-    }, [analyzed.empty, error, generated]);
+    }, [analyzed.empty, error, generated.ts, generated.zod, generated.jsonSchema]);
 
-    const tsCode = analyzed.empty ? '' : output.ts;
-    const zodCode = analyzed.empty ? '' : output.zod;
-    const jsonSchemaCode = analyzed.empty ? '' : output.jsonSchema;
+    const showOutput = !analyzed.empty && !error;
+    const tsCode = showOutput ? output.ts : '';
+    const zodCode = showOutput ? output.zod : '';
+    const jsonSchemaCode = showOutput ? output.jsonSchema : '';
 
     return (
         <div className="flex h-screen flex-col">

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import dynamic from 'next/dynamic';
 
+import { parseJson } from '@/lib/parse';
 import { panelToolbar, toolbarButton } from './ui';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
@@ -29,11 +30,9 @@ export function JsonInput({ value, onChange, dark }: Props) {
     };
 
     const formatInput = () => {
-        try {
-            onChange(JSON.stringify(JSON.parse(value), null, 2) + '\n');
-        } catch {
-            // empty
-        }
+        const result = parseJson(value);
+
+        if (result.ok) onChange(JSON.stringify(result.value, null, 2) + '\n');
     };
 
     return (

@@ -1,4 +1,11 @@
-import { collectEnums, collectObjects, IRNode, rootTypeName, safePropertyKey } from './ir';
+import {
+    collectEnums,
+    collectObjects,
+    IRNode,
+    literalSource,
+    rootTypeName,
+    safePropertyKey,
+} from './ir';
 import { GenerationSettings, nameOptions } from './settings';
 
 export function generateZod(root: IRNode, settings: GenerationSettings): string {
@@ -21,7 +28,8 @@ export function generateZod(root: IRNode, settings: GenerationSettings): string 
             if (field.optional) expr += '.optional()';
             return `  ${zodPropertyKey(field.key)}: ${expr},`;
         });
-        const lines = [`export const ${obj.name}Schema = z.object({`, ...fields, `});`];
+        const close = settings.readonly ? '}).readonly();' : '});';
+        const lines = [`export const ${obj.name}Schema = z.object({`, ...fields, close];
 
         if (settings.zodInferType) {
             lines.push(`export type ${obj.name} = z.infer<typeof ${obj.name}Schema>;`);
@@ -55,7 +63,10 @@ function zodExpr(node: IRNode, settings: GenerationSettings): string {
         case 'primitive':
             if (node.type === 'string' && node.format && settings.dateFormat !== 'off') {
                 if (settings.dateFormat === 'date') return 'z.coerce.date()';
-                return node.format === 'date-time' ? 'z.string().datetime()' : 'z.string().date()';
+
+                return node.format === 'date-time'
+                    ? 'z.string().datetime({ offset: true })'
+                    : 'z.string().date()';
             }
             if (node.type === 'number' && node.int && settings.inferIntegers) {
                 return 'z.number().int()';
@@ -67,7 +78,7 @@ function zodExpr(node: IRNode, settings: GenerationSettings): string {
         case 'unknown':
             return settings.arrayEmpty === 'any' ? 'z.any()' : 'z.unknown()';
         case 'literal':
-            return `z.literal(${JSON.stringify(node.value)})`;
+            return `z.literal(${literalSource(node.value)})`;
         case 'object':
         case 'enum':
             return `${node.name}Schema`;

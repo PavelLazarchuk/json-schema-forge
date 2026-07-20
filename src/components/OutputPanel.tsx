@@ -67,8 +67,12 @@ export function OutputPanel({ tsCode, zodCode, jsonSchemaCode, settings, dark }:
     }
 
     const copy = async () => {
-        await navigator.clipboard.writeText(code);
-        setCopied(true);
+        try {
+            await navigator.clipboard.writeText(code);
+            setCopied(true);
+        } catch {
+            // empty
+        }
     };
 
     const download = () => {

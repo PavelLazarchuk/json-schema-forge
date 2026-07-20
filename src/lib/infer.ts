@@ -7,17 +7,32 @@ export interface InferOptions {
 
 const MAX_DEPTH = 64;
 
-const DATE_TIME_RE = /^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})$/;
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_TIME_RE =
+    /^(\d{4})-(\d{2})-(\d{2})[Tt]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})$/;
+const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+function isValidCalendarDate(year: number, month: number, day: number): boolean {
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day
+    );
+}
 
 function stringFormat(value: string): IRStringFormat | undefined {
-    const format = DATE_TIME_RE.test(value)
-        ? 'date-time'
-        : DATE_RE.test(value)
-          ? 'date'
-          : undefined;
+    const dateTimeMatch = DATE_TIME_RE.exec(value);
+    const match = dateTimeMatch ?? DATE_RE.exec(value);
 
-    return format && !Number.isNaN(Date.parse(value)) ? format : undefined;
+    if (!match) return undefined;
+
+    const [, year, month, day] = match;
+
+    if (!isValidCalendarDate(Number(year), Number(month), Number(day))) return undefined;
+    if (Number.isNaN(Date.parse(value))) return undefined;
+
+    return dateTimeMatch ? 'date-time' : 'date';
 }
 
 export function inferIR(value: unknown, options: InferOptions): IRNode {
@@ -32,19 +47,24 @@ function inferValue(value: unknown, options: InferOptions, depth: number): IRNod
 
     const type = typeof value;
     if (type === 'string' || type === 'number' || type === 'boolean') {
-        if (options.literals && (type !== 'number' || Number.isFinite(value))) {
-            return { kind: 'literal', value: value as string | number | boolean };
-        }
-
         if (type === 'string') {
             const str = value as string;
-            const node: IRPrimitive = { kind: 'primitive', type: 'string' };
             const format = stringFormat(str);
+
+            if (options.literals && !format) {
+                return { kind: 'literal', value: str };
+            }
+
+            const node: IRPrimitive = { kind: 'primitive', type: 'string' };
 
             if (format) node.format = format;
             if (options.enums) node.values = new Map([[str, 1]]);
 
             return node;
+        }
+
+        if (options.literals && (type !== 'number' || Number.isFinite(value))) {
+            return { kind: 'literal', value: value as string | number | boolean };
         }
 
         if (type === 'number' && Number.isSafeInteger(value)) {

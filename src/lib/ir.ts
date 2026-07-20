@@ -220,6 +220,10 @@ export function safePropertyKey(key: string): string {
     return IDENTIFIER_RE.test(key) ? key : JSON.stringify(key);
 }
 
+export function literalSource(value: string | number | boolean): string {
+    return Object.is(value, -0) ? '-0' : JSON.stringify(value);
+}
+
 export function toPascalCase(input: string): string {
     const parts = input.split(/[^A-Za-z0-9]+/).filter(Boolean);
     let name = parts.map(part => part[0].toUpperCase() + part.slice(1)).join('');
